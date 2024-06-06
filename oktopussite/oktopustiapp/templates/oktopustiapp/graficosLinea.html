@@ -1,0 +1,114 @@
+{% extends 'oktopustiapp/base.html' %}
+
+{% block title %}Gráficos - OKTOPUS{% endblock %}
+
+{% block content %}
+<div class="col m-2">
+    <form id="filtro-formulario">
+      <div class="row">
+        <div class="col-md-6">
+          <h5>Tipo gráfico</h5>
+          <select class="js-example-basic-multiple tipo-grafico" multiple="multiple" style="width: 100%;">
+            <option value="linea" id="linea" class="tipo-grafico">Línea</option>
+            <option value="barras" id="barras" class="tipo-grafico">Barras</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+          <h5>Tipo parametro</h5>
+          <select class="js-example-basic-multiple tipo-parametro" multiple="multiple" style="width: 100%;">
+            <option value="humedad" id="humedad" class="tipo-parametro">Humedad</option>
+            <option value="temperatura" id="temperatura" class="tipo-parametro">Temperatura</option>
+            </select>
+        </div>
+        <div class="col-md-12 d-flex justify-content-end mt-1">
+          <button id="boton-actualizar" class="btn btn-outline-warning">Actualizar Gráfico</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+    <div class="d-flex flex-wrap mt-4">
+        <!-- Gráfico de TOP 10 Temperatura Ambiental -->
+        <div id="plotly_barras_" class="grafico" data-parametro="temperatura" style="display: none;">
+            {{ plotly_html6 | safe }}
+        </div>
+        <!-- Gráfico de Linea Temperatura -->
+        <div id="plotly_linea_" class="grafico" data-parametro="temperatura" style="display: none;"  >
+            {{ plotly_html7 | safe }}
+        </div>
+        <!-- Gráfico de Linea Humedad -->
+        <div id="plotly_linea_" class="grafico" data-parametro="humedad" style="display: none;" >
+            {{ plotly_html8 | safe }}
+        </div>
+        <!-- Gráfico de barras Temperatura -->
+        <div id="plotly_barras_" class="grafico" data-parametro="temperatura" style="display: none;">
+            {{ plotly_html9 | safe }}
+        </div>
+        <!-- Gráfico de barras Humedad -->
+        <div id="plotly_barras_" class="grafico" data-parametro="humedad" style="display: none;">
+            {{ plotly_html10 | safe }}
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('.js-example-basic-multiple').select2({
+                placeholder: "Buscar...",
+                allowClear: true
+            });
+        
+            $('.js-example-basic-multiple').on('change', function() {
+                filtrarGraficos();
+            });
+        
+            function filtrarGraficos() {
+                var tiposGraficoSeleccionados = $('.js-example-basic-multiple').val() || [];
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function (){
+        // Función para mostrar u ocultar los gráficos según los filtros seleccionados
+        function filtrarGraficos(){
+            var tiposGraficoSeleccionados = Array.from(document.querySelectorAll('.tipo-grafico:checked')).map(function(checkbox) {
+                return checkbox.value;
+            });
+            var tiposParametroSeleccionados = Array.from(document.querySelectorAll('.tipo-parametro:checked')).map(function(checkbox) {
+                return checkbox.value;
+            });
+            
+            // Ocultar todos los gráficos
+            var graficos = document.querySelectorAll('.grafico');
+            graficos.forEach(function (grafico) {
+                grafico.style.display = 'none';
+            });
+            
+            
+            // Mostrar los gráficos que coinciden con los tipos de gráfico seleccionados
+            graficos.forEach(function (grafico) {
+                var tipoGrafico = grafico.getAttribute('id').split('_')[1];
+                var tipoParametro = grafico.getAttribute('data-parametro');
+                
+                // Si no hay tipos de gráfico seleccionados o el tipo de gráfico coincide
+                if (!tiposGraficoSeleccionados.length || tiposGraficoSeleccionados.includes(tipoGrafico)) {
+                    // Si no hay tipos de parámetro seleccionados o el tipo de parámetro coincide
+                    if (!tiposParametroSeleccionados.length || tiposParametroSeleccionados.includes(tipoParametro)) {
+                        grafico.style.display = 'block';
+                    }
+                }
+            });
+        }
+        
+        // Agregar un event listener a los checkboxes para manejar el evento de cambio
+        var checkboxesTipoGrafico = document.querySelectorAll('.tipo-grafico, .tipo-parametro');
+        checkboxesTipoGrafico.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                filtrarGraficos(); // Llamar a la función para filtrar los gráficos
+            });
+        });
+        var botonActualizar = document.querySelector('#boton-actualizar');
+        botonActualizar.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevenir el comportamiento por defecto del botón
+            filtrarGraficos(); // Llamar a la función para filtrar los gráficos
+        });
+
+    });
+    </script>
+{% endblock %}

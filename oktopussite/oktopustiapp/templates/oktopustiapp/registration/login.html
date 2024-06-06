@@ -1,0 +1,17 @@
+{% extends "oktopustiapp/base.html" %}
+
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="card p-3" style="max-width: 400px; width: 100%;">
+    <h2 class="mb-4 text-center">Oktopus Login</h2>
+    <form method="post">
+      <div class="d-flex justify-content-center align-items-center">{% csrf_token %} {{ form.as_p }} </div>
+      <div class="mb-3 form-check"></div>
+      <button type="submit" class="btn btn-outline-warning w-100 mb-2">Iniciar Sesión</button>
+      <a href="{% url 'register' %}" class="btn btn-link w-100">Registrarse</a>
+    </form>
+  </div>
+
+{% endblock content %}

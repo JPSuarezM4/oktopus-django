@@ -1,0 +1,56 @@
+{% extends "oktopustiapp\base.html" %} 
+{% load static %}
+
+{% block content %}
+<div class="container text-center">
+  <h1>OKTOPUS es un sistema para la gestión y el análisis de datos IoT</h1>
+</div>
+
+<div class="container d-flex justify-content-center">
+  <div class="card m-3" style="width: 18rem;">
+    <div class="zoom-container">
+        <img src="{% static 'oktopustiapp/img/settingsimage1.png' %}" class="card-img-top rounded-0 img-fluid">
+    </div>
+    <div class="card-body d-flex flex-column">
+        <h5 class="card-title">Configuración de Dispositivos</h5>
+        <p class="card-text"> </p>
+        <a href="{% url 'graficosenlinea' %}" class="btn btn-outline-warning mt-auto">Ir</a>
+    </div>
+  </div>
+  <div class="card m-3" style="width: 18rem;">
+    <div class="zoom-container">
+        <img src="{% static 'oktopustiapp/img/lineaimage.png' %}" class="card-img-top rounded-0 img-fluid">
+    </div>
+    <div class="card-body d-flex flex-column">
+        <h5 class="card-title">Visualización en línea</h5>
+        <p class="card-text"> </p>
+        <a href="{% url 'graficosenlinea' %}" class="btn btn-outline-warning mt-auto">Ir</a>
+    </div>
+</div>
+  <div class="card m-3" style="width: 18rem;">
+      <div class="zoom-container">
+          <img src="{% static 'oktopustiapp/img/edaimage.png' %}" class="card-img-top rounded-0 img-fluid">
+      </div>
+      <div class="card-body d-flex flex-column">
+          <h5 class="card-title">Visualización de gráficos EDA</h5>
+          <p class="card-text"> </p>
+          <a href="{% url 'graficoseda' %}" class="btn btn-outline-warning mt-auto">Ir</a>
+      </div>
+  </div>
+  
+  
+</div>
+
+<style>
+  .zoom-container {
+    overflow: hidden;
+  }
+  .zoom-container img {
+    transition: transform 0.2s;
+  }
+  .zoom-container:hover img {
+    transform: scale(1.05);
+  }
+</style>
+
+{% endblock content %}

@@ -1,0 +1,334 @@
+{% extends "oktopustiapp\base.html" %} 
+
+{% load static %}
+
+{% block content %}
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.css"
+/>
+<script
+  type="text/javascript"
+  src="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.js"
+></script>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th,
+  td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+  }
+  .hidden {
+    display: none;
+  }
+</style>
+<div class="col m-2">
+  <form id="filtro-formulario">
+    <div class="row">
+      <div class="col-md-6">
+        <h5>Tipo gráfico</h5>
+        <select
+          class="js-example-basic-multiple tipo-grafico"
+          multiple="multiple"
+          style="width: 100%"
+        >
+          <option value="boxplot" id="boxplot" class="tipo-grafico">
+            Boxplot
+          </option>
+          <option value="histograma" id="histograma" class="tipo-grafico">
+            Histograma
+          </option>
+          <option value="correlacion" id="correlacion" class="tipo-grafico">
+            Correlación
+          </option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <h5>Tipo parametro</h5>
+        <select
+          class="js-example-basic-multiple tipo-parametro"
+          multiple="multiple"
+          style="width: 100%"
+        >
+          <option value="PM10" id="PM10" class="tipo-parametro">PM10</option>
+          <option value="PM2.5" id="PM2.5" class="tipo-parametro">PM2.5</option>
+          <option value="temperatura" id="temperatura" class="tipo-parametro">
+            Temperatura
+          </option>
+        </select>
+      </div>
+      <div class="col-md-12 d-flex justify-content-end mt-1">
+        <button id="boton-actualizar" class="btn btn-outline-warning mt-auto">
+          Actualizar Gráfico
+        </button>
+      </div>
+      <div class="col-md-12 d-flex justify-content-end mt-1">
+        <button
+          type="button"
+          class="btn btn-outline-warning mt-auto"
+          data-bs-toggle="modal"
+          data-bs-target="#DataFrame"
+          id="showDataFrame"
+        >
+          Mostrar DataFrame
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+<!-- Modal -->
+<div
+  class="modal"
+  id="DataFrame"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <!-- Ajustar el tamaño del modal según sea necesario -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Data Frame</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div id="DataPy1">
+        <div
+          class="table table-group-divider modal-body overflow-auto"
+          id="DataPy"
+        >
+          <!-- Agregar la clase overflow-auto para habilitar el desplazamiento -->
+          <table id="dataFrameTable">
+            <thead>
+              <tr>
+                <th class="col-date">Date</th>
+                <th class="col-PM10_Reference">PM10_Reference</th>
+                <th class="col-PM2.5_Reference">PM2.5_Reference</th>
+                <th class="col-TIME">TIME</th>
+                <th class="col-PM1">PM1</th>
+                <th class="col-PM2.5">PM2.5</th>
+                <th class="col-PM10">PM10</th>
+                <th class="col-TEMPERATURE_INT">TEMPERATURE_INT</th>
+                <th class="col-HUMIDITY_INT">HUMIDITY_INT</th>
+                <th class="col-TEMPERATURE_AMB">TEMPERATURE_AMB</th>
+                <th class="col-HUMIDITY_AMB">HUMIDITY_AMB</th>
+                <th class="col-Year">Year</th>
+                <th class="col-Month">Month</th>
+                <th class="col-Day">Day</th>
+                <th class="col-Hour">Hour</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in data %}
+              <tr>
+                <td class="col-date">{{ row.date }}</td>
+                <td class="col-PM10_Reference">{{ row.PM10_Reference }}</td>
+                <td class="col-PM2.5_Reference">{{ row.PM2.5_Reference }}</td>
+                <td class="col-TIME">{{ row.TIME }}</td>
+                <td class="col-PM1">{{ row.PM1 }}</td>
+                <td class="col-PM2.5">{{ row.PM2.5 }}</td>
+                <td class="col-PM10">{{ row.PM10 }}</td>
+                <td class="col-TEMPERATURE_INT">{{ row.TEMPERATURE_INT }}</td>
+                <td class="col-HUMIDITY_INT">{{ row.HUMIDITY_INT }}</td>
+                <td class="col-TEMPERATURE_AMB">{{ row.TEMPERATURE_AMB }}</td>
+                <td class="col-HUMIDITY_AMB">{{ row.HUMIDITY_AMB }}</td>
+                <td class="col-Year">{{ row.Year }}</td>
+                <td class="col-Month">{{ row.Month }}</td>
+                <td class="col-Day">{{ row.Day }}</td>
+                <td class="col-Hour">{{ row.Hour }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="d-flex flex-wrap mt-4">
+  <!-- Gráfico de Matriz de correlación -->
+  <div
+    id="plotly_correlacion"
+    class="grafico"
+    data-parametro=""
+    style="display: none"
+  >
+    {{ plotly_html | safe }}
+  </div>
+  <!-- Gráfico de Plotly Histograma PM10_Reference -->
+  <div
+    id="plotly_histograma_"
+    class="grafico"
+    data-parametro="PM10"
+    style="display: none"
+  >
+    {{ plotly_html2 | safe }}
+  </div>
+
+  <!-- Gráfico de Plotly Histograma PM2.5_Reference -->
+  <div
+    id="plotly_histograma_"
+    class="grafico"
+    data-parametro="PM2.5"
+    style="display: none"
+  >
+    {{ plotly_html3 | safe }}
+  </div>
+
+  <!-- Gráfico de Boxplot PM10_Reference -->
+  <div
+    id="plotly_boxplot_"
+    class="grafico"
+    data-parametro="PM10"
+    style="display: none"
+  >
+    {{ plotly_html4 | safe }}
+  </div>
+
+  <!-- Gráfico de Boxplot PM2.5_Reference -->
+  <div
+    id="plotly_boxplot_"
+    class="grafico"
+    data-parametro="PM2.5"
+    style="display: none"
+  >
+    {{ plotly_html5 | safe }}
+  </div>
+
+  <!-- Gráfico de TOP 10 Temperatura Ambiental -->
+  <div
+    id="plotly_barras_"
+    class="grafico"
+    data-parametro="temperatura"
+    style="display: none"
+  >
+    {{ plotly_html6 | safe }}
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $(".js-example-basic-multiple").select2({
+      placeholder: "Buscar...",
+      allowClear: true,
+    });
+
+    $("#showDataFrame").on("click", function () {
+      filtrarGraficos();
+    });
+
+    function filtrarGraficos() {
+      var tiposParametroSeleccionados =
+        $(".js-example-basic-multiple.tipo-parametro").val() || [];
+
+      if (tiposParametroSeleccionados.length === 0) {
+        // Mostrar todas las columnas si no hay parámetros seleccionados
+        $("#dataFrameTable th, #dataFrameTable td").removeClass("hidden");
+      } else {
+        // Ocultar todas las columnas
+        $("#dataFrameTable th, #dataFrameTable td").addClass("hidden");
+
+        // Mostrar las columnas seleccionadas
+        tiposParametroSeleccionados.forEach(function (tipoParametro) {
+          var columnIndex =
+            $("#dataFrameTable th")
+              .filter(function () {
+                return (
+                  $(this).text().trim() === tipoParametro ||
+                  $(this).text().trim() === tipoParametro.toUpperCase()
+                );
+              })
+              .index() + 1;
+
+          if (columnIndex > 0) {
+            $(
+              "#dataFrameTable th:nth-child(" +
+                columnIndex +
+                "), #dataFrameTable td:nth-child(" +
+                columnIndex +
+                ")"
+            ).removeClass("hidden");
+          }
+        });
+      }
+    }
+
+    $("#dataFrameTable").DataTable();
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    // Función para mostrar u ocultar los gráficos según los filtros seleccionados
+    function filtrarGraficos() {
+      var tiposGraficoSeleccionados = Array.from(
+        document.querySelectorAll(".tipo-grafico:checked")
+      ).map(function (checkbox) {
+        return checkbox.value;
+      });
+      var tiposParametroSeleccionados = Array.from(
+        document.querySelectorAll(".tipo-parametro:checked")
+      ).map(function (checkbox) {
+        return checkbox.value;
+      });
+
+      // Ocultar todos los gráficos
+      var graficos = document.querySelectorAll(".grafico");
+      graficos.forEach(function (grafico) {
+        grafico.style.display = "none";
+      });
+
+      // Mostrar los gráficos que coinciden con los tipos de gráfico seleccionados
+      graficos.forEach(function (grafico) {
+        var tipoGrafico = grafico.getAttribute("id").split("_")[1];
+        var tipoParametro = grafico.getAttribute("data-parametro");
+
+        // Si no hay tipos de gráfico seleccionados o el tipo de gráfico coincide
+        if (
+          !tiposGraficoSeleccionados.length ||
+          tiposGraficoSeleccionados.includes(tipoGrafico)
+        ) {
+          // Si no hay tipos de parámetro seleccionados o el tipo de parámetro coincide
+          if (
+            !tiposParametroSeleccionados.length ||
+            tiposParametroSeleccionados.includes(tipoParametro)
+          ) {
+            grafico.style.display = "block";
+          }
+        }
+      });
+    }
+
+    // Agregar un event listener a los checkboxes para manejar el evento de cambio
+    var checkboxesTipoGrafico = document.querySelectorAll(
+      ".tipo-grafico, .tipo-parametro"
+    );
+    checkboxesTipoGrafico.forEach(function (checkbox) {
+      checkbox.addEventListener("change", function () {
+        filtrarGraficos(); // Llamar a la función para filtrar los gráficos
+      });
+    });
+    var botonActualizar = document.querySelector("#boton-actualizar");
+    botonActualizar.addEventListener("click", function (event) {
+      event.preventDefault(); // Prevenir el comportamiento por defecto del botón
+      filtrarGraficos(); // Llamar a la función para filtrar los gráficos
+    });
+  });
+</script>
+{% endblock %}

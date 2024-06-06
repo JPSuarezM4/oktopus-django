@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %} Configuración de Dispositivos {% endblock %}
+
+{% block content %}
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración de Dispositivos</title>
+    <br>
+    <!-- Incluir estilos de Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <style>
+        /* Estilos personalizados para la página de configuración */
+        .container {
+            margin-top: 20px;
+        }
+
+        .ubicacion-btn {
+            /* Estilo para el botón de ubicación con un icono */
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .ubicacion-icon {
+            /* Estilo para el icono de ubicación */
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+
+    <script>
+        // Función para obtener la ubicación
+        function obtenerUbicacion() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(mostrarUbicacion);
+            } else {
+                alert("Tu navegador no soporta la geolocalización.");
+            }
+        }
+
+        // Función para mostrar la ubicación (latitud y longitud)
+        function mostrarUbicacion(position) {
+            const lat = position.coords.latitude;
+            const long = position.coords.longitude;
+            alert(`Ubicación actual:\nLatitud: ${lat}, Longitud: ${long}`);
+        }
+
+        // Función para mostrar la latitud
+        function mostrarLatitud() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    alert(`Latitud: ${position.coords.latitude}`);
+                });
+            } else {
+                alert("Tu navegador no soporta la geolocalización.");
+            }
+        }
+
+        // Función para mostrar la longitud
+        function mostrarLongitud() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    alert(`Longitud: ${position.coords.longitude}`);
+                });
+            } else {
+                alert("Tu navegador no soporta la geolocalización.");
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Título de la página -->
+        <h2>Configuración de Dispositivos</h2>
+        <br>
+        <!-- Formulario -->
+        <form>
+            <!-- Casillas de verificación -->
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="opcion1">
+                <label class="form-check-label" for="opcion1">Ubicación no Geográfica</label>
+            </div>
+
+            <br>
+
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="opcion2">
+                <label class="form-check-label" for="opcion2">Ubicación Geográfica</label>
+            </div>
+
+            <br>
+
+            <!-- Lista desplegable: Tipo de Dispositivo -->
+            <div class="form-group">
+                <label for="seleccion">Tipo de Dispositivo:</label>
+                <select class="form-control" id="seleccion">
+                    <option value="opcion1">Dispositivo 1</option>
+                    <option value="opcion2">Dispositivo 2</option>
+                    <option value="opcion3">Dispositivo 3</option>
+                    <option value="opcion4">Dispositivo 4</option>
+                </select>
+            </div>
+
+            <!-- Lista desplegable: Parámetro a ser registrado -->
+            <div class="form-group">
+                <label for="seleccion2">Parámetro a ser registrado:</label>
+                <select class="form-control" id="seleccion2">
+                    <option value="opcion1">Humedad</option>
+                    <option value="opcion2">Temperatura</option>
+                    <option value="opcion3">Calidad del agua</option>
+                    <option value="opcion4">Calidad del aire</option>
+                </select>
+            </div>
+
+            <!-- Botones para obtener ubicación, latitud y longitud -->
+            <div class="form-group d-flex justify-content-between">
+                <!-- Botón con gráfico de ubicación -->
+                <button type="button" class="ubicacion-btn" onclick="obtenerUbicacion()">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGYlsxY-ablE_d92jtussT-AOhwYQ5bn43ecqZkbMwBJqdlC4&s" alt="Ubicación" class="ubicacion-icon">
+                    Ver Ubicación en el Mapa
+                </button>
+
+                <!-- Botones para latitud y longitud -->
+                <div class="m-2">
+                    <button type="button" class="btn btn-primary" onclick="mostrarLatitud()">Latitud</button>
+                    <button type="button" class="btn btn-primary" onclick="mostrarLongitud()">Longitud</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+{% endblock %}
